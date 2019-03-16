@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const flash =  require('connect-flash');
 
 //////////////////////////////  Inicializaciones
 const app = express();
@@ -23,15 +24,21 @@ app.set('view engine', '.hbs');
 
 //////////////////////////////  Middelware
 app.use(express.urlencoded({extended: false}));
-app.use(methodOverride('__method'));
+app.use(methodOverride('_method'));
 app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true
 }))
-
+app.use(flash());
 
 //////////////////////////////  Global variables
+app.use((req, res, next)=>{
+    res.locals.succes_msg = req.flash('succes_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    next();
+});
+
 
 //////////////////////////////  Routes
 app.use(require('./routes/index'));
